@@ -1,0 +1,11 @@
+# Node
+node_modules/
+.expo/
+dist/
+# Ruby/Rails
+.bundle/
+log/
+tmp/
+coverage/
+.DS_Store
+.env
