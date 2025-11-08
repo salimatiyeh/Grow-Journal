@@ -1,0 +1,2 @@
+class Grow < ApplicationRecord
+end

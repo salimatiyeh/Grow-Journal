@@ -1,1 +1,1 @@
-# Backend (Rails API)
+# Grow-Journal
