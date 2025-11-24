@@ -13,5 +13,7 @@ Rails.application.routes.draw do
       resources :plant_daily_data, only: %i[create]      # <-- needed
     end
     resources :plant_daily_data, only: %i[show update]
+
+    get 'weather/:zip', to: 'weather#show'
   end
 end
