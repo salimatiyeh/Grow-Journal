@@ -2,20 +2,15 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client.js';
 
-function fetchOutsideWeatherStub() {
-  // TODO: replace with real weather API call later.
-  return {
-    outside_high_f: 95,
-    outside_low_f: 72,
-    humidity_percent: 55
-  };
-}
+const DEFAULT_ZIP = '73160';
 
 function DailyEntryNewPage() {
   const { growId } = useParams();
   const navigate = useNavigate();
   const [growName, setGrowName] = useState('');
   const [error, setError] = useState('');
+  const [weatherError, setWeatherError] = useState('');
+  const [weatherLoading, setWeatherLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
     const today = new Date();
@@ -53,14 +48,42 @@ function DailyEntryNewPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleWeatherFill = () => {
-    const stub = fetchOutsideWeatherStub();
-    setFormData((prev) => ({
-      ...prev,
-      outside_high_f: stub.outside_high_f,
-      outside_low_f: stub.outside_low_f,
-      humidity_percent: stub.humidity_percent
-    }));
+  const handleWeatherFill = async () => {
+    setWeatherError('');
+    setWeatherLoading(true);
+    try {
+      const date = formData.date;
+      if (!date) throw new Error('Please select a date first.');
+
+      const resp = await fetch(
+        `http://localhost:3000/v1/weather/${DEFAULT_ZIP}?date=${encodeURIComponent(
+          date
+        )}`
+      );
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data.error || 'Weather lookup failed');
+      }
+      setFormData((prev) => ({
+        ...prev,
+        outside_high_f:
+          data.outside_high_f !== undefined
+            ? data.outside_high_f.toString()
+            : prev.outside_high_f,
+        outside_low_f:
+          data.outside_low_f !== undefined
+            ? data.outside_low_f.toString()
+            : prev.outside_low_f,
+        humidity_percent:
+          data.humidity_percent !== undefined
+            ? data.humidity_percent.toString()
+            : prev.humidity_percent
+      }));
+    } catch (err) {
+      setWeatherError(err.message || 'Could not fetch weather.');
+    } finally {
+      setWeatherLoading(false);
+    }
   };
 
   const handleSubmit = async (evt) => {
@@ -104,6 +127,7 @@ function DailyEntryNewPage() {
         </div>
 
         {error && <div className="form-error">{error}</div>}
+        {weatherError && <div className="form-error">{weatherError}</div>}
 
         <form className="form-stack" onSubmit={handleSubmit} noValidate>
           <div className="form-group">
@@ -173,7 +197,7 @@ function DailyEntryNewPage() {
 
           <div className="form-group">
             <button type="button" className="ghost-button" onClick={handleWeatherFill}>
-              Auto-fill from weather
+              {weatherLoading ? 'Loading weather…' : 'Auto-fill from weather'}
             </button>
           </div>
 

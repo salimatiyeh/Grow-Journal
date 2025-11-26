@@ -47,15 +47,14 @@ export const api = {
   getPlants: (growId) => request(`/v1/grows/${growId}/plants`),
   getPlant: (id) => request(`/v1/plants/${id}`),
   createPlant: (growId, payload) => {
-    const formData = new FormData();
-    Object.entries(payload).forEach(([key, value]) => {
-      if (value === null || value === undefined || value === '') return;
-      if (key === 'photo' && value instanceof File) {
-        formData.append(`plant[${key}]`, value);
-      } else {
-        formData.append(`plant[${key}]`, value);
-      }
-    });
+    const formData = payload instanceof FormData ? payload : (() => {
+      const fd = new FormData();
+      Object.entries(payload).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === '') return;
+        fd.append(`plant[${key}]`, value);
+      });
+      return fd;
+    })();
     return request(`/v1/grows/${growId}/plants`, {
       method: 'POST',
       body: formData,
