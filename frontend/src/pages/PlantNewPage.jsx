@@ -159,7 +159,7 @@ function PlantNewPage() {
               id="potSizeGal"
               name="potSizeGal"
               type="number"
-              step="0.1"
+              step="0.5"
               min="0"
               className="text-input"
               value={formData.potSizeGal}

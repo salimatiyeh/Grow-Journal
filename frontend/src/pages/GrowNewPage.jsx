@@ -9,7 +9,8 @@ function GrowNewPage() {
     startDate: '',
     plantCount: '',
     lighting: '',
-    notes: ''
+    notes: '',
+    area_sqft: ''
   });
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
@@ -43,6 +44,7 @@ function GrowNewPage() {
       const payload = {
         name: formData.name.trim(),
         start_date: formData.startDate,
+        area_sqft: formData.areaSqft,
         plant_count: Number(formData.plantCount),
         lighting: formData.lighting.trim() || undefined,
         notes: formData.notes.trim() || undefined
@@ -99,6 +101,24 @@ function GrowNewPage() {
             />
             {errors.startDate && (
               <p className="field-error">{errors.startDate}</p>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="areaSqft">Square Feet *</label>
+            <input
+              id="areaSqft"
+              name="areaSqft"
+              value={formData.areaSqft}
+              onChange={handleChange}
+              type="number"
+              min="1"
+              step=".5"
+              className="text-input"
+              required
+            />
+            {errors.plantCount && (
+              <p className="field-error">{errors.areaSqft}</p>
             )}
           </div>
 
