@@ -21,6 +21,7 @@ function DailyEntryNewPage() {
       date: `${y}-${m}-${d}`,
       temperature_f: '',
       humidity_percent: '',
+      outside_humidity_percent: '',
       outside_high_f: '',
       outside_low_f: '',
       notes: ''
@@ -74,10 +75,10 @@ function DailyEntryNewPage() {
           data.outside_low_f !== undefined
             ? data.outside_low_f.toString()
             : prev.outside_low_f,
-        humidity_percent:
+        outside_humidity_percent:
           data.humidity_percent !== undefined
             ? data.humidity_percent.toString()
-            : prev.humidity_percent
+            : prev.outside_humidity_percent
       }));
     } catch (err) {
       setWeatherError(err.message || 'Could not fetch weather.');
@@ -100,6 +101,9 @@ function DailyEntryNewPage() {
         date: formData.date,
         temperature_f: formData.temperature_f ? Number(formData.temperature_f) : null,
         humidity_percent: formData.humidity_percent ? Number(formData.humidity_percent) : null,
+        outside_humidity_percent: formData.outside_humidity_percent
+          ? Number(formData.outside_humidity_percent)
+          : null,
         outside_high_f: formData.outside_high_f ? Number(formData.outside_high_f) : null,
         outside_low_f: formData.outside_low_f ? Number(formData.outside_low_f) : null,
         notes: formData.notes || null
@@ -157,13 +161,26 @@ function DailyEntryNewPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="humidity_percent">Humidity (%)</label>
+            <label htmlFor="">Humidity (%)</label>
             <input
               id="humidity_percent"
               name="humidity_percent"
               type="number"
               className="text-input"
               value={formData.humidity_percent}
+              onChange={handleChange}
+              placeholder="55"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="outside_humidity_percent">Outside Humidity (%)</label>
+            <input
+              id="outside_humidity_percent"
+              name="outside_humidity_percent"
+              type="number"
+              className="text-input"
+              value={formData.outside_humidity_percent}
               onChange={handleChange}
               placeholder="60"
             />
