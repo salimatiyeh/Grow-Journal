@@ -1,6 +1,7 @@
 class DailyEntry < ApplicationRecord
   belongs_to :grow
   has_many :plant_daily_data, class_name: 'PlantDailyDatum', dependent: :destroy
+  validates :date, presence: true, uniqueness: { scope: :grow_id }
   before_save :recalculate_vpd
   private
   def recalculate_vpd

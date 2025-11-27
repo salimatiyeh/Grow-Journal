@@ -85,6 +85,7 @@ function DailyLogCard({
               <p><strong>Temp:</strong> {entry.temperature_f ?? '–'}°F</p>
               <p><strong>Humidity:</strong> {entry.humidity_percent ?? '–'}%</p>
               <p><strong>VPD:</strong> {entry.vpd ?? '–'}</p>
+              <p><strong>Outside Humidity:</strong> {entry.outside_humidity_percent ?? '–'}%</p>
               <p>
                 <strong>Outside:</strong> {entry.outside_high_f ?? '–'}° /{' '}
                 {entry.outside_low_f ?? '–'}°
