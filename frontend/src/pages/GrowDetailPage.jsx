@@ -10,6 +10,10 @@ import {
   CartesianGrid
 } from 'recharts';
 import { api } from '../api/client.js';
+import GrowStatsCard from '../components/GrowStatsCard.jsx';
+import PlantsCard from '../components/PlantsCard.jsx';
+import DailyLogCard from '../components/DailyLogCard.jsx';
+import AnalyticsCard from '../components/AnalyticsCard.jsx';
 
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -275,190 +279,35 @@ function GrowDetailPage() {
         {grow.notes && <p className="muted">{grow.notes}</p>}
       </div>
 
-      <div className="panel">
-        <div className="panel-header">
-          <h2>Grow Stats</h2>
-        </div>
-        <div className="stats-grid">
-          <div className="stat-card">
-            <span className="label">Grow Area</span>
-            <strong>{grow.area_sqft ? `${grow.area_sqft} sqft` : 'Not set'}</strong>
-          </div>
-          <div className="stat-card">
-            <span className="label">Light</span>
-            <strong>{lightInfo || 'Not set'}</strong>
-          </div>
-          <div className="stat-card">
-            <span className="label">Plant Count</span>
-            <strong>{plantCount}</strong>
-          </div>
-          <div className="stat-card">
-            <span className="label">Days Since Start</span>
-            <strong>{daysRunning !== null ? daysRunning : 'Not set'}</strong>
-          </div>
-          <div className="stat-card">
-            <span className="label">Last Daily Entry</span>
-            <strong>{latestEntryDate ? formatDisplayDate(latestEntryDate) : 'No entries yet'}</strong>
-          </div>
-        </div>
-      </div>
+      <GrowStatsCard
+        grow={grow}
+        lightInfo={lightInfo}
+        plantCount={plantCount}
+        daysRunning={daysRunning}
+        latestEntryDate={latestEntryDate}
+        formatDisplayDate={formatDisplayDate}
+      />
 
-      <div className="panel">
-        <div className="panel-header">
-          <h2>Daily Log</h2>
-          <div className="calendar-nav">
-            <button
-              type="button"
-              className="ghost-button inline-button"
-              onClick={() =>
-                setCurrentMonth(
-                  new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
-                )
-              }
-            >
-              ← Prev
-            </button>
-            <strong>
-              {currentMonth.toLocaleString('default', { month: 'long' })}{' '}
-              {currentMonth.getFullYear()}
-            </strong>
-            <button
-              type="button"
-              className="ghost-button inline-button"
-              onClick={() =>
-                setCurrentMonth(
-                  new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
-                )
-              }
-            >
-              Next →
-            </button>
-          </div>
-        </div>
+      <PlantsCard plants={plants} navigate={navigate} growId={growId} />
 
-        <div className="calendar-grid header">
-          {dayLabels.map((day) => (
-            <div key={day} className="calendar-cell header-cell">
-              {day}
-            </div>
-          ))}
-        </div>
-        <div className="calendar-grid">
-          {calendarDays.map((dateObj, idx) => {
-            if (!dateObj) {
-              return <div key={`empty-${idx}`} className="calendar-cell empty" />;
-            }
-            const dateKey = formatDateKey(dateObj);
-            const hasEntry = Boolean(entriesByDate[dateKey]);
-            const isSelected = selectedDate === dateKey;
-            return (
-              <button
-                key={dateKey}
-                type="button"
-                className={`calendar-cell day-cell ${hasEntry ? 'has-entry' : ''} ${
-                  isSelected ? 'selected' : ''
-                }`}
-                onClick={() => setSelectedDate(dateKey)}
-              >
-                <span>{dateObj.getDate()}</span>
-              </button>
-            );
-          })}
-        </div>
+      <DailyLogCard
+        dayLabels={dayLabels}
+        calendarDays={calendarDays}
+        entriesByDate={entriesByDate}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        currentMonth={currentMonth}
+        setCurrentMonth={setCurrentMonth}
+        selectedEntries={selectedEntries}
+        formatDateKey={formatDateKey}
+        formatDisplayDate={formatDisplayDate}
+      />
 
-        <div className="day-detail">
-          <h3>Day Details</h3>
-          {!selectedEntries.length ? (
-            <p className="muted">No entry for this date.</p>
-          ) : (
-            selectedEntries.map((entry) => (
-              <div key={entry.id} className="day-detail-card">
-                <p className="muted">{formatDisplayDate(entry.date)}</p>
-                <p><strong>Temp:</strong> {entry.temperature_f ?? '–'}°F</p>
-                <p><strong>Humidity:</strong> {entry.humidity_percent ?? '–'}%</p>
-                <p><strong>VPD:</strong> {entry.vpd ?? '–'}</p>
-                <p>
-                  <strong>Outside:</strong> {entry.outside_high_f ?? '–'}° /{' '}
-                  {entry.outside_low_f ?? '–'}°
-                </p>
-                {entry.notes && <p className="muted">{entry.notes}</p>}
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      <div className="panel">
-        <div className="panel-header">
-          <h2>Analytics</h2>
-          <div className="tab-bar">
-            <button
-              type="button"
-              className={`tab-button ${activeTab === 'temp' ? 'active' : ''}`}
-              onClick={() => setActiveTab('temp')}
-            >
-              Temperature
-            </button>
-            <button
-              type="button"
-              className={`tab-button ${activeTab === 'humidity' ? 'active' : ''}`}
-              onClick={() => setActiveTab('humidity')}
-            >
-              Humidity
-            </button>
-            <button
-              type="button"
-              className={`tab-button ${activeTab === 'vpd' ? 'active' : ''}`}
-              onClick={() => setActiveTab('vpd')}
-            >
-              VPD
-            </button>
-          </div>
-        </div>
-        <div className="chart-panel">{renderChart()}</div>
-      </div>
-
-      <div className="panel">
-        <div className="panel-header">
-          <h2>Plants</h2>
-          <span className="pill">{plants.length}</span>
-        </div>
-
-        {plants.length === 0 ? (
-          <p className="muted">No plants yet for this grow.</p>
-        ) : (
-          <div className="plant-list">
-            {plants.map((plant) => (
-              <button
-                key={plant.id}
-                type="button"
-                className="plant-card plant-card-clickable"
-                onClick={() => navigate(`/grows/${growId}/plants/${plant.id}`)}
-              >
-                {plant.photo_url ? (
-                  <img
-                    src={plant.photo_url}
-                    alt={plant.name || 'Plant photo'}
-                    className="plant-card-image"
-                  />
-                ) : (
-                  <div className="plant-card-image placeholder" aria-hidden="true">
-                    No photo
-                  </div>
-                )}
-                <div className="plant-content">
-                  <div className="plant-name">
-                    {plant.name || 'Unnamed plant'}
-                  </div>
-                  <p className="grow-card-meta">
-                    {plant.strain || 'Strain not set'}
-                  </p>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+      <AnalyticsCard
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        renderChart={renderChart}
+      />
 
       <button
         type="button"
