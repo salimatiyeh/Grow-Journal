@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client.js';
+import PlantEntryTypeModal from '../components/PlantEntryTypeModal.jsx';
 
 function PlantShowPage() {
   const { plantId } = useParams();
@@ -8,6 +9,7 @@ function PlantShowPage() {
   const [plant, setPlant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isEntryModalOpen, setIsEntryModalOpen] = useState(false);
 
   const fetchPlant = useCallback(async () => {
     setLoading(true);
@@ -99,10 +101,19 @@ function PlantShowPage() {
       <button
         type="button"
         className="fab fab-pill"
-        onClick={() => navigate(`/plants/${plant.id}/entries/new`)}
+        onClick={() => setIsEntryModalOpen(true)}
       >
         New Entry +
       </button>
+
+      <PlantEntryTypeModal
+        isOpen={isEntryModalOpen}
+        onClose={() => setIsEntryModalOpen(false)}
+        onSelect={(type) => {
+          console.log('Selected entry type:', type);
+          setIsEntryModalOpen(false);
+        }}
+      />
     </div>
   );
 }
