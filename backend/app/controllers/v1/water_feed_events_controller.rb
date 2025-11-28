@@ -42,7 +42,10 @@ module V1
     private
 
     def event_params
-      params.permit(:date, :is_feed, :ph, :ppm_ec_value, :ppm_ec_unit)
+      permitted = params.permit(:date, :is_feed, :ph, :solution_ph, :ppm_ec_value, :ppm_ec_unit,
+                                :water_amount_gal, :nutrient_notes)
+      permitted[:ph] = permitted.delete(:solution_ph) if permitted[:solution_ph]
+      permitted
     end
 
     # Accept either explicit plant_splits[] or even_split_total_gal + plant_ids[]

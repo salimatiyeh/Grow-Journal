@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_24_180000) do
+ActiveRecord::Schema[7.1].define(version: 2025_11_24_182000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -143,6 +143,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_24_180000) do
     t.decimal "ph", precision: 4, scale: 2
     t.decimal "ppm_ec_value", precision: 8, scale: 2
     t.boolean "is_feed", default: false, null: false
+    t.decimal "water_amount_gal", precision: 4, scale: 2
+    t.text "nutrient_notes"
     t.index ["grow_id"], name: "index_water_feed_events_on_grow_id"
   end
 

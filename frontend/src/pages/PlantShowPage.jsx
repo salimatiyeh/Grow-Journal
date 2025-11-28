@@ -4,7 +4,7 @@ import { api } from '../api/client.js';
 import PlantEntryTypeModal from '../components/PlantEntryTypeModal.jsx';
 
 function PlantShowPage() {
-  const { plantId } = useParams();
+  const { plantId, growId } = useParams();
   const navigate = useNavigate();
   const [plant, setPlant] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -110,7 +110,10 @@ function PlantShowPage() {
         isOpen={isEntryModalOpen}
         onClose={() => setIsEntryModalOpen(false)}
         onSelect={(type) => {
-          console.log('Selected entry type:', type);
+          if (!plant) return;
+          if (type === 'water') {
+            navigate(`/grows/${growId}/plants/${plant.id}/water-events/new`);
+          }
           setIsEntryModalOpen(false);
         }}
       />
