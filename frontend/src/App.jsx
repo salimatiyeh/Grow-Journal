@@ -5,6 +5,7 @@ import GrowNewPage from './pages/GrowNewPage.jsx';
 import DailyEntryNewPage from './pages/DailyEntryNewPage.jsx';
 import PlantNewPage from './pages/PlantNewPage.jsx';
 import PlantShowPage from './pages/PlantShowPage.jsx';
+import PlantWaterEventNewPage from './pages/PlantWaterEventNewPage.jsx';
 import './App.css';
 
 function Header() {
@@ -54,6 +55,10 @@ function App() {
           <Route
             path="/grows/:growId/plants/:plantId"
             element={<PlantShowPage />}
+          />
+          <Route
+            path="/grows/:growId/plants/:plantId/water-events/new"
+            element={<PlantWaterEventNewPage />}
           />
           <Route
             path="/grows/:growId/daily-entry/new"
